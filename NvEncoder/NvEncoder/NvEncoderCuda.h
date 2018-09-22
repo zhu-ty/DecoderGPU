@@ -63,6 +63,20 @@ public:
         uint32_t dstChromaPitch,
         uint32_t numChromaPlanes,
         bool bUnAlignedDeviceCopy = false);
+
+
+	static void CopyToDeviceFrame_YUV420(CUcontext device,
+		std::vector<void*> pSrcFrames,
+		uint32_t nSrcPitchY,
+		CUdeviceptr pDstFrame,
+		uint32_t dstPitch,
+		int width,
+		int height,
+		CUmemorytype srcMemoryType,
+		NV_ENC_BUFFER_FORMAT pixelFormat,
+		const uint32_t dstChromaOffsets[],
+		uint32_t numChromaPlanes,
+		bool bUnAlignedDeviceCopy = false);
 private:
     /**
     *  @brief This function is used to allocate input buffers for encoding.

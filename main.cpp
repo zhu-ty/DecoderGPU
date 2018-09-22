@@ -49,13 +49,13 @@ int main(int argc, char* argv[])
 
 	//Encoder init
 	//TODO: maybe use YUV420 in the future
-	//NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_IYUV;
-	NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_ABGR;
+	NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_IYUV;
+	//NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_ABGR;
 	NvEncoderInitParam encodeCLIOptions;
 	ck(cuInit(0));
 	CUdevice cuDevice = 0;
 	int nGpu = 0;
-	int iGpu = 0;
+	int iGpu = 1;
 	ck(cuDeviceGetCount(&nGpu));
 	ck(cuDeviceGet(&cuDevice, iGpu));
 	char szDeviceName[80];
@@ -86,6 +86,9 @@ int main(int argc, char* argv[])
 	char* data = new char[width * height];
 	cv::cuda::GpuMat img(height, width, CV_8UC3);
 	cv::cuda::GpuMat img_4(height, width, CV_8UC4);
+	std::vector<void*> _gpu_decoded_YUVdata(3);
+	int Ystep;
+
 
 
 	std::ofstream fpOut(output.c_str(), std::ios::out | std::ios::binary);
@@ -109,14 +112,24 @@ int main(int argc, char* argv[])
 		if (i == 0) {
 			coder.init(width, height, quality);
 		}
-		coder.decode(reinterpret_cast<unsigned char*>(data), length, img_4, 2);
+		//coder.decode(reinterpret_cast<unsigned char*>(data), length, img_4, 2);
+		coder.decode(reinterpret_cast<unsigned char*>(data), length, _gpu_decoded_YUVdata, Ystep);
 
 		// For receiving encoded packets
 		std::vector<std::vector<uint8_t>> vPacket;
 		if (i < frameNum - 1)
 		{
 			const NvEncInputFrame* encoderInputFrame = enc.GetNextInputFrame();
-			NvEncoderCuda::CopyToDeviceFrame(cuContext, img_4.data, img_4.step, (CUdeviceptr)encoderInputFrame->inputPtr,
+			//NvEncoderCuda::CopyToDeviceFrame(cuContext, img_4.data, img_4.step, (CUdeviceptr)encoderInputFrame->inputPtr,
+			//	(int)encoderInputFrame->pitch,
+			//	enc.GetEncodeWidth(),
+			//	enc.GetEncodeHeight(),
+			//	CU_MEMORYTYPE_DEVICE,
+			//	//CU_MEMORYTYPE_HOST,
+			//	encoderInputFrame->bufferFormat,
+			//	encoderInputFrame->chromaOffsets,
+			//	encoderInputFrame->numChromaPlanes);
+			NvEncoderCuda::CopyToDeviceFrame_YUV420(cuContext, _gpu_decoded_YUVdata, Ystep, (CUdeviceptr)encoderInputFrame->inputPtr,
 				(int)encoderInputFrame->pitch,
 				enc.GetEncodeWidth(),
 				enc.GetEncodeHeight(),
