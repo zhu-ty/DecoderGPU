@@ -43,8 +43,13 @@ int main(int argc, char* argv[])
 {
 	if (argc < 2)
 	{
-		printf("usage: Decoder input.bin output.avi\n");
+		printf("usage: Decoder input.bin gpu_id\n");
 		return 0;
+	}
+	int iGpu = 0;
+	if (argc >= 3)
+	{
+		iGpu = std::atoi(argv[2]);
 	}
 
 	//Encoder init
@@ -52,11 +57,17 @@ int main(int argc, char* argv[])
 	NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_IYUV;
 	//NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_ABGR;
 	NvEncoderInitParam encodeCLIOptions;
+	//NvEncGetEncodeCaps();
 	ck(cuInit(0));
 	CUdevice cuDevice = 0;
 	int nGpu = 0;
-	int iGpu = 1;
 	ck(cuDeviceGetCount(&nGpu));
+	if (iGpu >= nGpu)
+	{
+		iGpu = nGpu - 1;
+	}
+
+
 	ck(cuDeviceGet(&cuDevice, iGpu));
 	char szDeviceName[80];
 	ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
@@ -76,6 +87,13 @@ int main(int argc, char* argv[])
 	int height;
 	FILE* fp = fopen(videoname.c_str(), "rb");
 	fread(&frameNum, sizeof(unsigned int), 1, fp);
+
+	if (argc >= 4)
+	{
+		frameNum = std::atoi(argv[3]);
+	}
+
+
 	fread(&width, sizeof(int), 1, fp);
 	fread(&height, sizeof(int), 1, fp);
 	fread(&quality, sizeof(int), 1, fp);
@@ -102,6 +120,15 @@ int main(int argc, char* argv[])
 	int nFrameSize = enc.GetFrameSize();
 	//std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nFrameSize]);
 	int nFrame = 0;
+	
+	
+	
+	
+	//uint32_t t;
+	//NvEncGetEncodePresetCount((void *)&enc, encodeCLIOptions.GetEncodeGUID(), &t);
+
+
+
 
 	for (size_t i = 0; i < frameNum; i++) {
 		//printf("Decode frame %d, total %d frames.\n", i, frameNum);
