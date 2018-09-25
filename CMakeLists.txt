@@ -116,9 +116,19 @@ cuda_add_executable(${name}
 
 message (${PROJECT_SOURCE_DIR}/lib/x64/nvcuvid.lib)
 
+if( WIN32 )
+    set(NVCUVID_LIB ${PROJECT_SOURCE_DIR}/lib/x64/nvcuvid.lib)
+else()
+    set(NVCUVID_LIB 
+    ${PROJECT_SOURCE_DIR}/lib/linux/stubs/x86_64/libnvcuvid.so
+    ${PROJECT_SOURCE_DIR}/lib/linux/stubs/x86_64/libnvidia-encode.so)
+endif()
+
+
 target_link_libraries(${name}
-    cuda.lib
-	${PROJECT_SOURCE_DIR}/lib/x64/nvcuvid.lib  
+    cuda
+	#${PROJECT_SOURCE_DIR}/lib/x64/nvcuvid.lib  
+    ${NVCUVID_LIB}
     ${OpenCV_LIBS}
     ${CUDA_LIBRARY} 	
 	${CUDA_npp_LIBRARY} 
