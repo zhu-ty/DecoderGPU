@@ -129,10 +129,10 @@ int main(int argc, char* argv[])
 
 
 
-
+	int step = (frameNum / 18 > 5) ? (frameNum / 18) : 5;
 	for (size_t i = 0; i < frameNum; i++) {
 		//printf("Decode frame %d, total %d frames.\n", i, frameNum);
-		if (i % 50 == 0)
+		if (i % step == 0)
 			printf("%s : Frame:%d, Total:%d\n", videoname.c_str(), i, frameNum);
 		fread(&length, sizeof(unsigned int), 1, fp);
 		fread(data, length, 1, fp);
