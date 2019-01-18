@@ -56,7 +56,8 @@ int main(int argc, char* argv[])
 	//TODO: maybe use YUV420 in the future
 	NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_IYUV;
 	//NV_ENC_BUFFER_FORMAT eFormat = NV_ENC_BUFFER_FORMAT_ABGR;
-	NvEncoderInitParam encodeCLIOptions;
+	//NvEncoderInitParam encodeCLIOptions("-codec hevc -rc vbr -bitrate 50M -maxbitrate 100M");
+	NvEncoderInitParam encodeCLIOptions("-codec hevc");
 	//NvEncGetEncodeCaps();
 	ck(cuInit(0));
 	CUdevice cuDevice = 0;
@@ -78,7 +79,7 @@ int main(int argc, char* argv[])
 
 	std::string videoname(argv[1]);
 	int dot_pos = videoname.find_last_of('.');
-	std::string output = videoname.substr(0, dot_pos) + ".h264";
+	std::string output = videoname.substr(0, dot_pos) + ".h265";
 	std::cout << cv::format("Find bin file: %s\n", videoname.c_str()) << std::endl;
 
 	int frameNum;

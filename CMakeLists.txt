@@ -84,9 +84,29 @@ set(CUDA_NVCC_FLAGS
 	-gencode=arch=compute_61,code=\"sm_61,compute_61\"
     )
 
-file (GLOB_RECURSE headers_h "./*.h")
-file (GLOB_RECURSE headers_hpp "./*.hpp")
-file (GLOB_RECURSE source_cpp "./*.cpp")
+set(headers_h
+    NvEncoder/NvEncoder/nvEncodeAPI.h
+    NvEncoder/NvEncoder/NvEncoder.h
+    NvEncoder/NvEncoder/NvEncoderCuda.h
+    NvEncoder/Utils/Logger.h
+    NvEncoder/Utils/NvEncoderCLIOptions.h
+    NvEncoder/Utils/NvCodecUtils.h
+	NPPJpegCoder.h
+    #SKEncoder.h
+    #SKCommon.hpp
+)
+
+set(source_cpp
+    NvEncoder/NvEncoder/NvEncoder.cpp
+    NvEncoder/NvEncoder/NvEncoderCuda.cpp
+    #SKEncoder.cpp
+	NPPJpegCoder.cpp
+    main.cpp
+)
+
+#file (GLOB_RECURSE headers_h "./*.h")
+#file (GLOB_RECURSE headers_hpp "./*.hpp")
+#file (GLOB_RECURSE source_cpp "./*.cpp")
 
 #list(REMOVE_ITEM source_cpp "build/*")
 FOREACH(item ${source_cpp})
